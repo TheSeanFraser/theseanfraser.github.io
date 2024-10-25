@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "High Park Hawk Watch mid-season record"
+title:  "High Park Hawk Watch: A Mid-Season Record"
 date:   2024-10-25 11:03:53 -0400
 categories: jekyll update
 ---
