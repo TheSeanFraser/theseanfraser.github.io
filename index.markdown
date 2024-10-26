@@ -5,4 +5,5 @@
 layout: home
 title: Home
 ---
-This website is still a work in progress. Please check out my projects!
+This website is a collection of my projects and ideas - sometimes they are useful, other times they are just for fun. \
+![Image](/assets/images/2024-08-20_BWHA.jpg)

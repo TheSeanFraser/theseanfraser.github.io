@@ -4,8 +4,12 @@ title: About Me
 permalink: /about/
 ---
 
-This website is a collection of my projects and ideas - sometimes they are useful, other times they are just for fun.
+# Sean Fraser
+A local patch birding enthusiast. \
+Follow me on: \
+[eBird](https://ebird.org/profile/MTE4NTQ3Mw/CA-ON-TO) \
+[iNaturalist](https://www.inaturalist.org/people/1848861) \
+[Instagram](www.instagram.com/theseanfraser) 
 
-Follow me on [Instagram](www.instagram.com/theseanfraser)
 
 
