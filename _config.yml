@@ -19,11 +19,12 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Numbirds
-# email: your-email@example.com
+email: sean@numbirds.ca
 description: >- # this means to ignore newlines until "baseurl:"
   Numbers about birds and other things.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "theseanfraser.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+tagline: "Numbers about birds and other things."
+url: "numbirds.ca" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  TheSeanFraser
 instagram_username: theseanfraser
 author: Sean Fraser
@@ -32,6 +33,11 @@ author: Sean Fraser
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+
+header_pages:
+  - about.markdown
+  - projects.markdown
 
 # Exclude from processing.
 # The following items will not be processed, by default.
