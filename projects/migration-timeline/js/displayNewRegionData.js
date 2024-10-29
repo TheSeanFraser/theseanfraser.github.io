@@ -1,4 +1,4 @@
-var path = 'media/lists/20_YEARS/';
+var path = 'http://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/';
 var selectRegionButton = document.getElementById("selectRegionButton");
 var region_response;
 var date_list_response, date_list_json;
