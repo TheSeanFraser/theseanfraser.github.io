@@ -18,5 +18,5 @@ Test your bird sound knowledge with a multiple choice quiz. This is a work in pr
 
 ## Insects
 
-### [High Park Butterfly Checklist and Timeline](/butterflies/insects/2024/10/28/hp-butterflies.html)
+### [High Park Butterfly Checklist and Timeline](/2024/10/28/hp-butterflies.html)
 A checklist of all butterfly species found in High Park, as well as a graph to find out when each species is flying.
