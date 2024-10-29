@@ -7,7 +7,7 @@ These are some of my featured projects:
 
 ## Birds
 
-### [High Park Hawk Watch Guide](https://theseanfraser.github.io/HPHW/)
+### [High Park Hawk Watch Guide](/projects/HPHW)
 Information about the High Park Hawk Watch, such as migration timing for each raptor species, best weather conditions, and so on.
 
 ### [Ontario Bird Arrival & Departure Dates](https://theseanfraser.github.io/ontario-arrival-departure-dates/)
