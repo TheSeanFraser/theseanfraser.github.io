@@ -1,7 +1,7 @@
 var regionListResponse;
 var torontoListResponse;
 
-fetch('res/regions_complete.json')
+fetch('http://numbirds.ca/projects/migration-timeline/res/regions_complete.json')
 	.then(response => response.json())
     .then(text=> regionListResponse = text)
     .then((response) => {
@@ -23,7 +23,7 @@ function updateSelectorList()
 
 }
 
-fetch('media/lists/20_YEARS/spring/CA-ON-TO.json')
+fetch('http://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/spring/CA-ON-TO.json')
 	.then(response => response.json())
     .then(text=> torontoListResponse = text)
     .then((response) => {
@@ -49,7 +49,7 @@ function populateSpringDateTable(){
     }
 }
 
-fetch('media/lists/20_YEARS/fall/CA-ON-TO.json')
+fetch('http://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/fall/CA-ON-TO.json')
 	.then(response => response.json())
     .then(text=> torontoListResponse = text)
     .then((response) => {
