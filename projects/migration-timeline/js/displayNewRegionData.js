@@ -77,7 +77,7 @@ function updateLists() {
 	table = document.getElementById("fall_date_list_body");
 	table.innerHTML = "";
 
-	fetch('http://numbirds.ca/projects/migration-timeline/res/regions_complete.json')
+	fetch('https://numbirds.ca/projects/migration-timeline/res/regions_complete.json')
 	.then(response => response.json())
     .then(text => region_response = text)
     .then((response) => {
