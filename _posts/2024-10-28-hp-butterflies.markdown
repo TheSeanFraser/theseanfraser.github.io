@@ -6,8 +6,9 @@ tags: butterflies insects
 ---
 You can [download a copy of the checklist and timeline here.](/assets/files/High%20Park%20Butterflies%20Checklist%20and%20Timeline.pdf)
 
-![Image](/assets/images/2024-08-10_GiantSwallowtail.jpg)
-*Giant Swallowtail - 10 AUG 2024*
+|![Image](/assets/images/2024-08-10_GiantSwallowtail.jpg)|
+| :---: |
+|*Giant Swallowtail - 10 AUG 2024* |
 
 Late last year, I became interested in expanding my knowledge about the inhabitants and visitors to High Park. For birders, it seems butterflies is a natural progression once you become familiar with your local birds.
 
