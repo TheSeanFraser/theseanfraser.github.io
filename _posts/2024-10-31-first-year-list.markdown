@@ -5,7 +5,7 @@ date: 2024-10-31
 tags: birds
 ---
 
-As a bit of a challenge, I tried to see how big of a year list I could get for my son during his first year of life - a true *year list*. While he was a newborn, it was very easy to wear him in a carrier and go birding while he napped - many visits to the High Park Hawk Watch happened like this. Around the time he turned six months old, the stroller became our mobile birding station (not a sponsorship, but BOB jogging strollers are incredible for non-paved trails). While he might not have been supportive of our adventures at all times, my son did enjoy getting outside and experiencing nature on a regular basis.
+As a bit of a challenge, I tried to see how big of a year list I could get for my son during his first year of life - a true *year list*. <!--more--> While he was a newborn, it was very easy to wear him in a carrier and go birding while he napped - many visits to the High Park Hawk Watch happened like this. Around the time he turned six months old, the stroller became our mobile birding station (not a sponsorship, but BOB jogging strollers are incredible for non-paved trails). While he might not have been supportive of our adventures at all times, my son did enjoy getting outside and experiencing nature on a regular basis.
 
 |![Image](/assets/images/baby-birder.jpg)|
 |:--:| 

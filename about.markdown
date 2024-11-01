@@ -6,7 +6,11 @@ permalink: /about/
 
 ![Image](/assets/images/me.jfif)
 ## Sean Fraser
-A local patch birding enthusiast based out of Toronto. I like to use my background in computer science to come up with projects involving birds that can be useful or just for fun. 
+A local patch birding enthusiast based out of Toronto. 
+
+I like to use my background in computer science to come up with projects involving birds that can be useful or just for fun. 
+
+Currently volunteering as the Records Director for the Toronto Ornithological Club.
 
 # Contact
 If you have any questions or ideas for future projects, send me an email at <sean@numbirds.ca>
