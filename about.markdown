@@ -13,7 +13,7 @@ I like to use my background in computer science to come up with projects involvi
 Currently volunteering as the Records Director for the Toronto Ornithological Club.
 
 # Contact
-If you have any questions or ideas for future projects, send me an email at <sean@numbirds.ca>
+If you have any questions or ideas for future projects, send me an email at <sean@numbirds.ca>. 
  
 # Follow me on:
 [eBird](https://ebird.org/profile/MTE4NTQ3Mw/CA-ON-TO)  
