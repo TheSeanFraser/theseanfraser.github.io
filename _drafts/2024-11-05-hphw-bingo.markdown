@@ -11,11 +11,9 @@ Each hawk watching season has a small target in the back of my head - raptor bin
 
 |![Image](/assets/images/2024-11-02_RLHA.jpg)|
 |:--:| 
-| *The bingo bird - the first of three Rough-legged Hawks that day.* |
+| *The bingo bird - a dark morph Rough-legged Hawk, the first of three that day.* |
 
 There is a pattern developing, however. For the last three years, I have been waiting for a Rough-legged Hawk. 
-
-
 - 2024: Rough-legged Hawk - November 2
 - 2023: Rough-legged Hawk - November 7
 - 2022: Rough-legged Hawk - November 28
