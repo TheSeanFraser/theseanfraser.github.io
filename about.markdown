@@ -18,7 +18,7 @@ If you have any questions or ideas for future projects, send me an email at <sea
 # Follow me on:
 [eBird](https://ebird.org/profile/MTE4NTQ3Mw/CA-ON-TO)  
 [iNaturalist](https://www.inaturalist.org/people/1848861)  
-[Instagram](www.instagram.com/theseanfraser) 
+[Instagram](https://www.instagram.com/theseanfraser) 
 
 
 
