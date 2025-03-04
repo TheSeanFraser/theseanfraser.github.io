@@ -11,19 +11,19 @@ function populateDatesInTable(region_response)
 	var spring_source = path + "/spring/"+ region_code + '.html';
 	var fall_source = path + "/fall/"+ region_code + '.html';
 
-	fetch(spring_source)
-        .then(response => response.json())
-        .then(text => date_list_response = text)
-        .then((response) => {
-            addSpringTable();
-            });
+	// fetch(spring_source)
+    //     .then(response => response.json())
+    //     .then(text => date_list_response = text)
+    //     .then((response) => {
+    //         addSpringTable();
+    //         });
 
-    fetch(fall_source)
-        .then(response => response.json())
-        .then(text => date_list_response = text)
-        .then((response) => {
-            addFallTable();
-            });
+    // fetch(fall_source)
+    //     .then(response => response.json())
+    //     .then(text => date_list_response = text)
+    //     .then((response) => {
+    //         addFallTable();
+    //         });
 }
 
 function addSpringTable(data){
