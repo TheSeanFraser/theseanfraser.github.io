@@ -33,12 +33,12 @@ fetch('https://numbirds.ca/projects/migration-timeline/data/spring/CA-ON-TO.json
 function populateSpringDateTable(){
     var spring_tbody = document.getElementById("spring_date_list_body");
 
-    for(var i = 0; i < Object.keys(torontoListResponse).length; i++){
+    for(var i = 0; i < Object.keys(torontoListResponse[0]).length; i++){
         var tr = document.createElement("tr");
         var td_date = document.createElement("td");
         var td_species = document.createElement("td");
-        var date = torontoListResponse["0"][i][1]
-        var species = torontoListResponse["0"][i][0];
+        var date = torontoListResponse[i][1]
+        var species = torontoListResponse[i][0];
         td_date.textContent = date;
         td_date.value = date;
         td_species.textContent = species;
