@@ -1,0 +1,62 @@
+---
+layout: page
+title:  Ontario Bird Migration Timeline
+permalink: /projects/migration-timeline
+---
+<head>
+    <script src="https://numbirds.ca/projects/migration-timeline/js/regionSelectorHandler.js" ></script>
+</head>
+<body>
+
+    <div class="writing">
+        <p>See <a href="/projects/migration-timeline/about">about page</a> for more information.</p>
+        <p>Below is a list of "mass arrival" dates of each species to the selected region. Some vagrant species are included.</p>
+        <p>The Fall date list will be listed below the Spring date list.</p>
+    
+        <!-- Region Selector-->
+        <label form="species">Select a region:</label>
+        <select name="date" id="regionSelector">
+            <option style="display: none">Toronto</option>
+        </select>
+        <div>&nbsp</div>
+        <div class="date_list_holder">
+            <div class="column" id="left_col">
+                <table class="table table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th colspan="2">Spring Mass Arrivals</th>
+                    </tr>
+                    <tr>
+                        <th title="Field #1">20 Year AVG</th>
+                        <th title="Field #2">Species</th>
+                    </tr>
+                    </thead>
+                    <tbody id="spring_date_list_body">
+    
+                    </tbody>
+                </table>
+            </div>
+            <div class="column" id="right_col">
+                 <table class="table table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th colspan="2">Fall Mass Arrivals</th>
+                    </tr>
+                    <tr>
+                        <th title="Field #1">20 Year AVG</th>
+                        <th title="Field #2">Species</th>
+                    </tr>
+                    </thead>
+                    <tbody id="fall_date_list_body">
+    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    </body>
+    <footer>
+        <script src="https://numbirds.ca/projects/migration-timeline/js/displayNewRegionData.js"></script>
+    </footer>
+    
