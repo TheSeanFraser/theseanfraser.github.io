@@ -23,55 +23,61 @@ function updateSelectorList()
 
 }
 
-fetch('https://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/spring/CA-ON-TO.json')
-	.then(response => response.json())
-    .then(text=> torontoListResponse = text)
-    .then((response) => {
-        this.populateSpringDateTable();
- 		});
-
-function populateSpringDateTable(){
-    var spring_tbody = document.getElementById("spring_date_list_body");
-
-    for(var i = 0; i < Object.keys(torontoListResponse).length; i++){
-        var tr = document.createElement("tr");
-        var td_date = document.createElement("td");
-        var td_species = document.createElement("td");
-        var date = torontoListResponse[i][0]
-        var species = torontoListResponse[i][1];
-        td_date.textContent = date;
-        td_date.value = date;
-        td_species.textContent = species;
-        td_species.value = species;
-        tr.appendChild(td_date);
-        tr.appendChild(td_species)
-        spring_tbody.appendChild(tr)
-    }
+function load_home() {
+     document.getElementById("spring-table").innerHTML='<object type="text/html" data="https://numbirds.ca/projects/migration-timeline/data/spring/CA-ON-TO.html" ></object>';
 }
 
-fetch('https://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/fall/CA-ON-TO.json')
-	.then(response => response.json())
-    .then(text=> torontoListResponse = text)
-    .then((response) => {
-        this.populateFallDateTable();
- 		});
+console.log("DONE");
 
-function populateFallDateTable(){
-    var fall_tbody = document.getElementById("fall_date_list_body");
+// fetch('https://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/spring/CA-ON-TO.json')
+// 	.then(response => response.json())
+//     .then(text=> torontoListResponse = text)
+//     .then((response) => {
+//         this.populateSpringDateTable();
+//  		});
 
-    for(var i = 0; i < Object.keys(torontoListResponse).length; i++){
-        var tr = document.createElement("tr");
-        var td_date = document.createElement("td");
-        var td_species = document.createElement("td");
-        var date = torontoListResponse[i][0]
-        var species = torontoListResponse[i][1];
-        td_date.textContent = date;
-        td_date.value = date;
-        td_species.textContent = species;
-        td_species.value = species;
-        tr.appendChild(td_date);
-        tr.appendChild(td_species)
-        fall_tbody.appendChild(tr)
-    }
-}
+// function populateSpringDateTable(){
+//     var spring_tbody = document.getElementById("spring_date_list_body");
+
+//     for(var i = 0; i < Object.keys(torontoListResponse).length; i++){
+//         var tr = document.createElement("tr");
+//         var td_date = document.createElement("td");
+//         var td_species = document.createElement("td");
+//         var date = torontoListResponse[i][0]
+//         var species = torontoListResponse[i][1];
+//         td_date.textContent = date;
+//         td_date.value = date;
+//         td_species.textContent = species;
+//         td_species.value = species;
+//         tr.appendChild(td_date);
+//         tr.appendChild(td_species)
+//         spring_tbody.appendChild(tr)
+//     }
+// }
+
+// fetch('https://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/fall/CA-ON-TO.json')
+// 	.then(response => response.json())
+//     .then(text=> torontoListResponse = text)
+//     .then((response) => {
+//         this.populateFallDateTable();
+//  		});
+
+// function populateFallDateTable(){
+//     var fall_tbody = document.getElementById("fall_date_list_body");
+
+//     for(var i = 0; i < Object.keys(torontoListResponse).length; i++){
+//         var tr = document.createElement("tr");
+//         var td_date = document.createElement("td");
+//         var td_species = document.createElement("td");
+//         var date = torontoListResponse[i][0]
+//         var species = torontoListResponse[i][1];
+//         td_date.textContent = date;
+//         td_date.value = date;
+//         td_species.textContent = species;
+//         td_species.value = species;
+//         tr.appendChild(td_date);
+//         tr.appendChild(td_species)
+//         fall_tbody.appendChild(tr)
+//     }
+// }
 

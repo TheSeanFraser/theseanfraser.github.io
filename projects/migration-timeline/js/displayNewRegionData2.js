@@ -1,14 +1,15 @@
-var path = 'https://numbirds.ca/projects/migration-timeline/media/lists/20_YEARS/';
+var path = 'https://numbirds.ca/projects/migration-timeline/data/';
 var selectRegionButton = document.getElementById("selectRegionButton");
 var region_response;
 var date_list_response, date_list_json;
 console.log(path);
+console.log("TESTAROO");
 
 function populateDatesInTable(region_response)
 {
     var region_code = region_response[document.getElementById("regionSelector").value];
-	var spring_source = path + "/spring/"+ region_code + '.json';
-	var fall_source = path + "/fall/"+ region_code + '.json';
+	var spring_source = path + "/spring/"+ region_code + '.html';
+	var fall_source = path + "/fall/"+ region_code + '.html';
 
 	fetch(spring_source)
         .then(response => response.json())
