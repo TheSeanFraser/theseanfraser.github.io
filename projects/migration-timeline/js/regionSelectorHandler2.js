@@ -37,7 +37,7 @@ function populateSpringDateTable(){
         var tr = document.createElement("tr");
         var td_date = document.createElement("td");
         var td_species = document.createElement("td");
-        var date = species[0]
+        var date = torontoListResponse[species][0];
         td_date.textContent = date;
         td_date.value = date;
         td_species.textContent = species;
