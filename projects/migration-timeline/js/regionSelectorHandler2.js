@@ -33,12 +33,11 @@ fetch('https://numbirds.ca/projects/migration-timeline/data/spring/CA-ON-TO.json
 function populateSpringDateTable(){
     var spring_tbody = document.getElementById("spring_date_list_body");
 
-    for(var i = 0; i < Object.keys(torontoListResponse[0]).length; i++){
+    for( species in torontoListResponse){
         var tr = document.createElement("tr");
         var td_date = document.createElement("td");
         var td_species = document.createElement("td");
-        var date = torontoListResponse[i][1]
-        var species = torontoListResponse[i][0];
+        var date = species[0]
         td_date.textContent = date;
         td_date.value = date;
         td_species.textContent = species;
@@ -47,6 +46,21 @@ function populateSpringDateTable(){
         tr.appendChild(td_species)
         spring_tbody.appendChild(tr)
     }
+    // OLD way
+    // for(var i = 0; i < Object.keys(torontoListResponse[0]).length; i++){
+    //     var tr = document.createElement("tr");
+    //     var td_date = document.createElement("td");
+    //     var td_species = document.createElement("td");
+    //     var date = torontoListResponse[i][1]
+    //     var species = torontoListResponse[i][0];
+    //     td_date.textContent = date;
+    //     td_date.value = date;
+    //     td_species.textContent = species;
+    //     td_species.value = species;
+    //     tr.appendChild(td_date);
+    //     tr.appendChild(td_species)
+    //     spring_tbody.appendChild(tr)
+    // }
 }
 
 // fetch('https://numbirds.ca/projects/migration-timeline/data/fall/CA-ON-TO.json')
