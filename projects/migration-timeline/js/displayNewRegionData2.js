@@ -29,21 +29,33 @@ function populateDatesInTable(region_response)
 function addSpringTable(data){
     var tbody = document.getElementById("spring_date_list_body");
 
-    // Add each row of the data to its own table element
-    for(var i = 0; i < date_list_response.length; i++){
+    for( species in torontoListResponse){
+        var mass_arriv_date = torontoListResponse[species][0];
+        var peak_date = torontoListResponse[species][1];
+        var peak_over_date = torontoListResponse[species][2];
+
         var tr = document.createElement("tr");
-        var td_date = document.createElement("td");
+        var td_mass_arriv_date = document.createElement("td");
         var td_species = document.createElement("td");
-        var date = date_list_response[i][0]
-        var species = date_list_response[i][1];
-        td_date.textContent = date;
-        td_date.value = date;
+        var td_peak_date = document.createElement("td");
+        var td_peak_over_date = document.createElement("td");
+
+
+        td_mass_arriv_date.textContent = mass_arriv_date;
+        td_mass_arriv_date.value = mass_arriv_date;
+        td_peak_date.textContent = peak_date;
+        td_peak_date.value = peak_date;
+        td_peak_over_date.textContent = peak_over_date;
+        td_peak_over_date.value = peak_over_date;
+
         td_species.textContent = species;
         td_species.value = species;
-        tr.appendChild(td_date);
+
         tr.appendChild(td_species)
-        tbody.appendChild(tr)
-    }
+        tr.appendChild(td_mass_arriv_date);
+        tr.appendChild(td_peak_date);
+        tr.appendChild(td_peak_over_date);
+        spring_tbody.appendChild(tr)
 }
 
 function addFallTable(data){
