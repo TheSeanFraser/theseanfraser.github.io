@@ -55,9 +55,8 @@ function populateSpringDateTable(){
         td_species.textContent = species;
         td_species.value = species;
 
-        tr.appendChild(td_mass_arriv_date);
-
         tr.appendChild(td_species)
+        tr.appendChild(td_mass_arriv_date);
         tr.appendChild(td_peak_date);
         tr.appendChild(td_peak_over_date);
         spring_tbody.appendChild(tr)
