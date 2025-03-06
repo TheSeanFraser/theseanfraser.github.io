@@ -4,8 +4,78 @@ title:  Ontario Bird Migration Timeline
 permalink: /projects/migration-timeline2
 ---
 <head>
-    <script src="https://numbirds.ca/projects/migration-timeline/js/regionSelectorHandler2.js" ></script>
-    <!-- <script type="text/javascript" src="js/regionSelectorHandler2.js"></script> -->
+    <script type="text/javascript">
+        // This script is to set up the region selector as well as preload the first list (Toronto)
+        var regionListResponse;
+        var torontoListResponse;
+
+        fetch('https://numbirds.ca/projects/migration-timeline/res/regions_complete.json')
+            .then(response => response.json())
+            .then(text=> regionListResponse = text)
+            .then((response) => {
+                this.updateSelectorList();
+                });
+
+
+        function updateSelectorList()
+        {
+            var selector = document.getElementById("regionSelector");
+
+            for(var i = 0; i < Object.keys(regionListResponse).length; i++){
+                var opt = Object.keys(regionListResponse)[i];
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                selector.appendChild(el);
+            }
+
+        }
+
+        fetch('https://numbirds.ca/projects/migration-timeline/data/spring/CA-ON-TO.json')
+            .then(response => response.json())
+            .then(text=> torontoListResponse = text)
+            .then((response) => {
+                this.populateSpringDateTable();
+                });
+
+        function populateSpringDateTable(){
+            var spring_tbody = document.getElementById("spring_date_list_body");
+
+            for( species in torontoListResponse){
+                var mass_arriv_date = torontoListResponse[species][0];
+                var peak_date = torontoListResponse[species][1];
+                var peak_over_date = torontoListResponse[species][2];
+
+                var tr = document.createElement("tr");
+                var td_mass_arriv_date = document.createElement("td");
+                var td_species = document.createElement("td");
+                var td_peak_date = document.createElement("td");
+                var td_peak_over_date = document.createElement("td");
+
+
+                td_mass_arriv_date.textContent = mass_arriv_date;
+                td_mass_arriv_date.value = mass_arriv_date;
+                td_mass_arriv_date.innerHTML = mass_arriv_date;
+                td_peak_date.textContent = peak_date;
+                td_peak_date.value = peak_date;
+                td_peak_date.innerHTML = peak_date;
+                td_peak_over_date.textContent = peak_over_date;
+                td_peak_over_date.value = peak_over_date;
+                td_peak_over_date.innerHTML = peak_over_date;
+
+                td_species.textContent = species;
+                td_species.value = species;
+                td_species.innerHTML = species;
+
+                tr.appendChild(td_species)
+                tr.appendChild(td_mass_arriv_date);
+                tr.appendChild(td_peak_date);
+                tr.appendChild(td_peak_over_date);
+                spring_tbody.appendChild(tr)
+            }
+    
+        }
+    </script>
 </head>
 <body>
 
@@ -24,17 +94,12 @@ permalink: /projects/migration-timeline2
         <div class="date_list_holder">
             
             <table id="spring-table" class="table table-bordered table-hover table-condensed">
-                <thead>
-                 <tr>
-                    <th colspan="4">Spring Mass Arrivals</th>
-                </tr> 
                 <tr>
-                    <th title="Field #2">Species</th>
-                    <th title="Field #1">Mass Arrival Date</th>
-                    <th title="Field #2">Peak Date</th>
-                    <th title="Field #2">Peak End Date</th>
+                    <th onclick="sortTable(0)" title="Field #2">Species</th>
+                    <th onclick="sortTable(1)" title="Field #1">Mass Arrival Date</th>
+                    <th onclick="sortTable(2)" title="Field #2">Peak Date</th>
+                    <th onclick="sortTable(3)" title="Field #2">Peak End Date</th>
                 </tr>
-                </thead>
                 <tbody id="spring_date_list_body">
 
                 </tbody>
@@ -66,6 +131,167 @@ permalink: /projects/migration-timeline2
     
     </body>
     <footer>
-        <script src="https://numbirds.ca/projects/migration-timeline/js/displayNewRegionData2.js"></script>
+        <script type="text/javascript">
+            var path = 'https://numbirds.ca/projects/migration-timeline/data/';
+            var selectRegionButton = document.getElementById("selectRegionButton");
+            var region_response;
+            var date_list_response, date_list_json;
+            console.log(path);
+            console.log("TESTAROO");
+
+            function populateDatesInTable(region_response)
+            {
+                var region_code = region_response[document.getElementById("regionSelector").value];
+                var spring_source = path + "/spring/"+ region_code + '.json';
+                var fall_source = path + "/fall/"+ region_code + '.json';
+
+                fetch(spring_source)
+                    .then(response => response.json())
+                    .then(text => date_list_response = text)
+                    .then((response) => {
+                        addSpringTable();
+                        });
+
+                // fetch(fall_source)
+                //     .then(response => response.json())
+                //     .then(text => date_list_response = text)
+                //     .then((response) => {
+                //         addFallTable();
+                //         });
+            }
+
+            function addSpringTable(data){
+                var spring_tbody = document.getElementById("spring_date_list_body");
+
+                for( species in date_list_response){
+                    var mass_arriv_date = date_list_response[species][0];
+                    var peak_date = date_list_response[species][1];
+                    var peak_over_date = date_list_response[species][2];
+
+                    var tr = document.createElement("tr");
+                    var td_mass_arriv_date = document.createElement("td");
+                    var td_species = document.createElement("td");
+                    var td_peak_date = document.createElement("td");
+                    var td_peak_over_date = document.createElement("td");
+
+
+                    td_mass_arriv_date.textContent = mass_arriv_date;
+                    td_mass_arriv_date.value = mass_arriv_date;
+                    td_mass_arriv_date.innerHTML = mass_arriv_date;
+                    td_peak_date.textContent = peak_date;
+                    td_peak_date.value = peak_date;
+                    td_peak_date.innerHTML = peak_date;
+                    td_peak_over_date.textContent = peak_over_date;
+                    td_peak_over_date.value = peak_over_date;
+                    td_peak_over_date.innerHTML = peak_over_date;
+
+                    td_species.textContent = species;
+                    td_species.value = species;
+                    td_species.innerHTML = species;
+
+                    tr.appendChild(td_species)
+                    tr.appendChild(td_mass_arriv_date);
+                    tr.appendChild(td_peak_date);
+                    tr.appendChild(td_peak_over_date);
+                    spring_tbody.appendChild(tr)
+                }
+            }
+
+            // function addFallTable(data){
+            //     var tbody = document.getElementById("fall_date_list_body");
+
+            //     // Add each row of the data to its own table element
+            //     for(var i = 0; i < date_list_response.length; i++){
+            //         var tr = document.createElement("tr");
+            //         var td_date = document.createElement("td");
+            //         var td_species = document.createElement("td");
+            //         var date = date_list_response[i][0]
+            //         var species = date_list_response[i][1];
+            //         td_date.textContent = date;
+            //         td_date.value = date;
+            //         td_species.textContent = species;
+            //         td_species.value = species;
+            //         tr.appendChild(td_date);
+            //         tr.appendChild(td_species)
+            //         tbody.appendChild(tr)
+            //     }
+            // }
+
+            var regionSelect = document.getElementById("regionSelector");
+            regionSelect.onchange = function (){updateLists()};
+            function updateLists() {
+                console.log("Button clicked");
+                var region = document.getElementById("regionSelector").value;
+
+                // Clear the tables for the new data
+                var table = document.getElementById("spring_date_list_body");
+                table.innerHTML = "";
+                table = document.getElementById("fall_date_list_body");
+                table.innerHTML = "";
+
+                fetch('https://numbirds.ca/projects/migration-timeline/res/regions_complete.json')
+                .then(response => response.json())
+                .then(text => region_response = text)
+                .then((response) => {
+                    populateDatesInTable(region_response);
+                    });
+            }
+        </script>
+        <script>
+            function sortTable(n) {
+              var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+              table = document.getElementById("spring-table");
+              switching = true;
+              // Set the sorting direction to ascending:
+              dir = "asc";
+              /* Make a loop that will continue until
+              no switching has been done: */
+              while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /* Loop through all table rows (except the
+                first, which contains table headers): */
+                for (i = 1; i < (rows.length - 1); i++) {
+                  // Start by saying there should be no switching:
+                  shouldSwitch = false;
+                  /* Get the two elements you want to compare,
+                  one from current row and one from the next: */
+                  x = rows[i].getElementsByTagName("TD")[n];
+                  y = rows[i + 1].getElementsByTagName("TD")[n];
+                  /* Check if the two rows should switch place,
+                  based on the direction, asc or desc: */
+                  if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                      // If so, mark as a switch and break the loop:
+                      shouldSwitch = true;
+                      break;
+                    }
+                  } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                      // If so, mark as a switch and break the loop:
+                      shouldSwitch = true;
+                      break;
+                    }
+                  }
+                }
+                if (shouldSwitch) {
+                  /* If a switch has been marked, make the switch
+                  and mark that a switch has been done: */
+                  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                  switching = true;
+                  // Each time a switch is done, increase this count by 1:
+                  switchcount ++;
+                } else {
+                  /* If no switching has been done AND the direction is "asc",
+                  set the direction to "desc" and run the while loop again. */
+                  if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                  }
+                }
+              }
+            }
+        </script>
     </footer>
     
