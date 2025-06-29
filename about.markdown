@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-![Image](/assets/images/me.jfif)
+![Image](/assets/images/me.jpg)
 ## Sean Fraser
 A local patch birding enthusiast based out of Toronto. 
 
