@@ -14,6 +14,7 @@ Currently volunteering as the Records Director for the Toronto Ornithological Cl
 
 # Contact
 If you have any questions or ideas for future projects, send me an email at <sean@numbirds.ca>. 
+Please do not contact me about the location of owls.
  
 # Follow me on:
 [eBird](https://ebird.org/profile/MTE4NTQ3Mw/CA-ON-TO)  
