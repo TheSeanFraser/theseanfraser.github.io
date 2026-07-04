@@ -391,20 +391,58 @@ permalink: /projects/leafminer-key-tool
             genusCard.classList.add('hidden');
             keyCard.classList.remove('hidden');
             currentGenusTitle.textContent = `Identification Key for: ${currentGenus}`;
-            
+            historyStack = [];
+            enterKeyMode();
+        });
+
+        // Decides whether to show the step-by-step key or, for genera with
+        // no key at all, the known leafminer species (if any were recorded).
+        function enterKeyMode() {
             const rootNode = dataset[currentGenus];
-            currentStepId = rootNode.start || "1";
-            
-            if (!rootNode[currentStepId]) {
-                const availableKeys = Object.keys(rootNode).filter(k => k !== 'start' && k !== 'host_plants');
-                if (availableKeys.length > 0) {
-                    currentStepId = availableKeys.includes("1") ? "1" : availableKeys[0];
-                }
+
+            if (!rootNode.start) {
+                renderNoKeyState(rootNode);
+                return;
             }
 
-            historyStack = [];
+            currentStepId = rootNode.start;
+            if (!rootNode[currentStepId]) {
+                const availableKeys = Object.keys(rootNode).filter(
+                    k => k !== 'start' && k !== 'host_plants' && k !== 'leafminer_species'
+                );
+                if (availableKeys.length > 0) {
+                    currentStepId = availableKeys.includes("1") ? "1" : availableKeys[0];
+                } else {
+                    renderNoKeyState(rootNode);
+                    return;
+                }
+            }
             renderCurrentStep();
-        });
+        }
+
+        // Genera with no dichotomous key are usually ones with only one (or
+        // a few, non-overlapping) documented leafminer(s) -- no branching
+        // questions are needed. Show what's known directly instead of
+        // erroring out.
+        function renderNoKeyState(rootNode) {
+            backBtn.classList.add('hidden');
+            const species = Array.isArray(rootNode.leafminer_species) ? rootNode.leafminer_species : [];
+
+            if (species.length > 0) {
+                questionText.textContent = "No key needed — documented leafminer(s) for this host genus:";
+                choicesContainer.innerHTML = species
+                    .map(s => `<div class="result-box">${s}</div>`)
+                    .join('');
+            } else {
+                questionText.textContent = "No dichotomous key available for this host genus.";
+                choicesContainer.innerHTML = `
+                    <div class="result-box" style="background-color:#edf2f7; border-color:#cbd5e0; color:#4a5568;">
+                        No specific leafminer species is recorded here — in the source text, any known
+                        miner(s) on this host are identified only to genus or family level.
+                    </div>
+                `;
+            }
+        }
 
         function renderCurrentStep() {
             choicesContainer.innerHTML = '';
@@ -467,14 +505,8 @@ permalink: /projects/leafminer-key-tool
         });
 
         restartBtn.addEventListener('click', () => {
-            const rootNode = dataset[currentGenus];
-            currentStepId = rootNode.start || "1";
-            if (!rootNode[currentStepId]) {
-                const availableKeys = Object.keys(rootNode).filter(k => k !== 'start' && k !== 'host_plants');
-                currentStepId = availableKeys.includes("1") ? "1" : availableKeys[0];
-            }
             historyStack = [];
-            renderCurrentStep();
+            enterKeyMode();
         });
 
         changeGenusBtn.addEventListener('click', () => {
