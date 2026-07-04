@@ -1,0 +1,491 @@
+---
+layout: page
+title: Interactive Leafminer Dichotomous Key
+permalink: /projects/leafminer-key-tool
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Leafminer Dichotomous Key</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fa;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid #e1e8ed;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+        select, textarea, input[type="file"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #fff;
+            font-size: 16px;
+            color: #333;
+        }
+        textarea {
+            height: 100px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        /* Top action/navigation buttons */
+        button {
+            background-color: #3182ce;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #2b6cb0;
+        }
+        .search-results {
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background: white;
+        }
+        .search-item {
+            padding: 12px;
+            background: #fff;
+            border-bottom: 1px solid #edf2f7;
+            cursor: pointer;
+            color: #333;
+            transition: background 0.15s ease;
+        }
+        .search-item:last-child {
+            border-bottom: none;
+        }
+        .search-item:hover {
+            background-color: #f7fafc;
+        }
+        .search-item .genus-title {
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+        .search-item .match-details {
+            font-size: 14px;
+            color: #4a5568;
+            margin-top: 2px;
+        }
+        .host-plants {
+            color: #2d3748;
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .host-list-item {
+            margin-bottom: 6px;
+        }
+        .host-list-item:last-child {
+            margin-bottom: 0;
+        }
+        .sci-name {
+            font-style: italic;
+            font-weight: 500;
+        }
+        .com-name {
+            color: #4a5568;
+        }
+        
+        /* FIX: Dichotomous Key Selection Buttons Styling */
+        .choice-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background-color: #ffffff !important;
+            color: #2d3748 !important; /* Forces dark slate text, eliminating dark mode inversion conflicts */
+            border: 2px solid #cbd5e0;
+            padding: 16px;
+            margin-top: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+        }
+        .choice-btn:hover, .choice-btn:focus {
+            border-color: #3182ce;
+            background-color: #ebf8ff !important;
+            color: #2b6cb0 !important; /* Subtle shift to deep blue on active choices */
+            transform: translateY(-1px);
+            outline: none;
+        }
+        
+        .result-box {
+            background-color: #c6f6d5;
+            border: 2px solid #38a169;
+            color: #22543d;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .back-btn {
+            background-color: #718096;
+            color: white;
+        }
+        .back-btn:hover {
+            background-color: #4a5568;
+        }
+        .restart-btn {
+            background-color: #e53e3e;
+            color: white;
+        }
+        .restart-btn:hover {
+            background-color: #c53030;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Leafminer Species Identifier</h1>
+
+    <div id="setup-card" class="card">
+        <h2>1. Load Dataset JSON</h2>
+        <div class="form-group">
+            <label for="file-input">Upload JSON File:</label>
+            <input type="file" id="file-input" accept=".json">
+        </div>
+        <div class="form-group">
+            <label for="json-paste">Or Paste JSON Data Directly:</label>
+            <textarea id="json-paste" placeholder='Paste your JSON structure here...'></textarea>
+        </div>
+        <button id="load-btn">Initialize Key</button>
+    </div>
+
+    <div id="genus-card" class="card hidden">
+        <h2>2. Find Plant Genus or Group</h2>
+        <div class="form-group">
+            <label for="plant-search">Search by Name, Scientific Name, or Common Name:</label>
+            <input type="text" id="plant-search" autocomplete="off" placeholder="Type to search... (e.g., Aralia, sarsaparilla, pennywort)">
+            <div id="search-results-box" class="search-results hidden"></div>
+        </div>
+        
+        <div id="host-plants-box" class="hidden">
+            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+            <label>Selected Group: <span id="selected-genus-name" style="color:#3182ce;"></span></label>
+            <label style="margin-top: 10px;">Documented Host Plants:</label>
+            <div id="host-plants-list" class="host-plants"></div>
+            <div class="btn-container">
+                <button id="start-key-btn">Begin Keying</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="key-card" class="card hidden">
+        <h2 id="current-genus-title">Keying Out...</h2>
+        <h3 id="question-text">Question goes here</h3>
+        <div id="choices-container"></div>
+        
+        <div class="btn-container">
+            <button id="back-btn" class="back-btn hidden">← Back to Previous Step</button>
+            <button id="restart-btn" class="restart-btn">Restart From Step 1</button>
+            <button id="change-genus-btn" class="back-btn">Change Plant</button>
+        </div>
+    </div>
+
+    <script>
+        let dataset = null;
+        let currentGenus = '';
+        let currentStepId = '';
+        let historyStack = [];
+
+        // DOM elements
+        const fileInput = document.getElementById('file-input');
+        const jsonPaste = document.getElementById('json-paste');
+        const loadBtn = document.getElementById('load-btn');
+        const setupCard = document.getElementById('setup-card');
+        
+        const genusCard = document.getElementById('genus-card');
+        const plantSearch = document.getElementById('plant-search');
+        const searchResultsBox = document.getElementById('search-results-box');
+        const hostPlantsBox = document.getElementById('host-plants-box');
+        const selectedGenusName = document.getElementById('selected-genus-name');
+        const hostPlantsList = document.getElementById('host-plants-list');
+        const startKeyBtn = document.getElementById('start-key-btn');
+
+        const keyCard = document.getElementById('key-card');
+        const currentGenusTitle = document.getElementById('current-genus-title');
+        const questionText = document.getElementById('question-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const backBtn = document.getElementById('back-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const changeGenusBtn = document.getElementById('change-genus-btn');
+
+        // Parse and initialize key
+        loadBtn.addEventListener('click', () => {
+            const pastedText = jsonPaste.value.trim();
+            if (pastedText) {
+                try {
+                    initDataset(JSON.parse(pastedText));
+                } catch (e) {
+                    alert("JSON Parse Error: " + e.message);
+                }
+            } else if (fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        initDataset(JSON.parse(event.target.result));
+                    } catch (e) {
+                        alert("JSON Parse Error from file: " + e.message);
+                    }
+                };
+                reader.readAsText(fileInput.files[0]);
+            } else {
+                alert("Please upload a file or paste your JSON data first.");
+            }
+        });
+
+        function initDataset(data) {
+            dataset = data;
+            setupCard.classList.add('hidden');
+            genusCard.classList.remove('hidden');
+            plantSearch.value = '';
+            executeSearch('');
+        }
+
+        // Live Search Handling
+        plantSearch.addEventListener('input', () => {
+            executeSearch(plantSearch.value.trim());
+        });
+
+        function executeSearch(query) {
+            searchResultsBox.innerHTML = '';
+            if (!dataset) return;
+
+            const lowerQuery = query.toLowerCase();
+            const matchingGenera = [];
+
+            Object.keys(dataset).forEach(genus => {
+                let matches = false;
+                let matchReason = '';
+
+                if (genus.toLowerCase().includes(lowerQuery)) {
+                    matches = true;
+                    matchReason = 'Matched group/family name';
+                }
+
+                const node = dataset[genus];
+                if (node && node.host_plants && Array.isArray(node.host_plants)) {
+                    const matchedHosts = [];
+                    node.host_plants.forEach(plant => {
+                        if (typeof plant === 'object' && plant !== null) {
+                            const sci = (plant.scientific_name || '').toLowerCase();
+                            const com = (plant.common_name || '').toLowerCase();
+                            if (sci.includes(lowerQuery) || com.includes(lowerQuery)) {
+                                matches = true;
+                                matchedHosts.push(plant.common_name ? `${plant.scientific_name} (${plant.common_name})` : plant.scientific_name);
+                            }
+                        } else if (typeof plant === 'string') {
+                            if (plant.toLowerCase().includes(lowerQuery)) {
+                                matches = true;
+                                matchedHosts.push(plant);
+                            }
+                        }
+                    });
+
+                    if (matches && !matchReason && matchedHosts.length > 0) {
+                        matchReason = `Host match: ${matchedHosts.slice(0, 2).join(', ')}${matchedHosts.length > 2 ? '...' : ''}`;
+                    }
+                }
+
+                if (matches) {
+                    matchingGenera.push({ genus, reason: matchReason || 'Direct entry match' });
+                }
+            });
+
+            if (matchingGenera.length > 0 && query.length > 0) {
+                searchResultsBox.classList.remove('hidden');
+                matchingGenera.slice(0, 25).forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'search-item';
+                    div.innerHTML = `
+                        <div class="genus-title">${item.genus}</div>
+                        <div class="match-details">${item.reason}</div>
+                    `;
+                    div.addEventListener('click', () => selectGenus(item.genus));
+                    searchResultsBox.appendChild(div);
+                });
+            } else {
+                searchResultsBox.classList.add('hidden');
+            }
+        }
+
+        function selectGenus(genus) {
+            currentGenus = genus;
+            searchResultsBox.classList.add('hidden');
+            plantSearch.value = genus;
+            
+            selectedGenusName.textContent = genus;
+            hostPlantsList.innerHTML = '';
+
+            const node = dataset[genus];
+            const hosts = (node && node.host_plants) ? node.host_plants : [];
+            
+            if (hosts.length > 0) {
+                hosts.forEach(plant => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'host-list-item';
+                    
+                    if (typeof plant === 'object' && plant !== null) {
+                        itemDiv.innerHTML = `<span class="sci-name">${plant.scientific_name || 'Unknown Sp.'}</span>` + 
+                                            (plant.common_name ? ` — <span class="com-name">${plant.common_name}</span>` : '');
+                    } else {
+                        itemDiv.innerHTML = `<span class="sci-name">${plant}</span>`;
+                    }
+                    hostPlantsList.appendChild(itemDiv);
+                });
+            } else {
+                hostPlantsList.textContent = 'No specific underlying host species parsed for this entry layer.';
+            }
+
+            hostPlantsBox.classList.remove('hidden');
+        }
+
+        startKeyBtn.addEventListener('click', () => {
+            if (!currentGenus || !dataset[currentGenus]) return;
+            genusCard.classList.add('hidden');
+            keyCard.classList.remove('hidden');
+            currentGenusTitle.textContent = `Identification Key for: ${currentGenus}`;
+            
+            const rootNode = dataset[currentGenus];
+            currentStepId = rootNode.start || "1";
+            
+            if (!rootNode[currentStepId]) {
+                const availableKeys = Object.keys(rootNode).filter(k => k !== 'start' && k !== 'host_plants');
+                if (availableKeys.length > 0) {
+                    currentStepId = availableKeys.includes("1") ? "1" : availableKeys[0];
+                }
+            }
+
+            historyStack = [];
+            renderCurrentStep();
+        });
+
+        function renderCurrentStep() {
+            choicesContainer.innerHTML = '';
+            
+            if (historyStack.length > 0) {
+                backBtn.classList.remove('hidden');
+            } else {
+                backBtn.classList.add('hidden');
+            }
+
+            const genusData = dataset[currentGenus];
+            const stepData = genusData ? genusData[currentStepId] : null;
+
+            if (!stepData || !stepData.choices) {
+                questionText.textContent = `Error: Step node "${currentStepId}" was referenced but could not be processed inside the selected structure.`;
+                return;
+            }
+
+            questionText.textContent = stepData.question || "Choose the best description:";
+
+            stepData.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                
+                btn.addEventListener('click', () => {
+                    if (choice.result) {
+                        displayResult(choice.result);
+                    } else {
+                        const nextStep = choice.next_step || choice.step;
+                        if (nextStep && genusData[nextStep]) {
+                            historyStack.push(currentStepId);
+                            currentStepId = nextStep;
+                            renderCurrentStep();
+                        } else {
+                            alert(`Error: Target path step "${nextStep}" does not exist in this key cluster.`);
+                        }
+                    }
+                });
+                
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function displayResult(speciesName) {
+            questionText.textContent = "Identification Complete!";
+            choicesContainer.innerHTML = `
+                <div class="result-box">
+                    Resulting Species: <i>${speciesName}</i>
+                </div>
+            `;
+            backBtn.classList.remove('hidden'); 
+        }
+
+        backBtn.addEventListener('click', () => {
+            if (historyStack.length > 0) {
+                currentStepId = historyStack.pop();
+                renderCurrentStep();
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            const rootNode = dataset[currentGenus];
+            currentStepId = rootNode.start || "1";
+            if (!rootNode[currentStepId]) {
+                const availableKeys = Object.keys(rootNode).filter(k => k !== 'start' && k !== 'host_plants');
+                currentStepId = availableKeys.includes("1") ? "1" : availableKeys[0];
+            }
+            historyStack = [];
+            renderCurrentStep();
+        });
+
+        changeGenusBtn.addEventListener('click', () => {
+            keyCard.classList.add('hidden');
+            genusCard.classList.remove('hidden');
+            hostPlantsBox.classList.add('hidden');
+            plantSearch.value = '';
+            executeSearch('');
+            plantSearch.focus();
+        });
+    </script>
+</body>
+</html>
