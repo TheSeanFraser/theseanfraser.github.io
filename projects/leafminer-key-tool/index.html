@@ -470,6 +470,7 @@ permalink: /projects/leafminer-key-tool
                 
                 btn.addEventListener('click', () => {
                     if (choice.result) {
+                        historyStack.push(currentStepId);
                         displayResult(choice.result);
                     } else {
                         const nextStep = choice.next_step || choice.step;
