@@ -1,0 +1,215 @@
+---
+title: "Host Plant Identification Search"
+layout: single
+permalink: /host-search/
+author_profile: false
+---
+
+<p>Upload your caterpillar database file to begin. Once loaded, enter the name of a host plant genus (e.g., <em>Quercus</em>, <em>Asclepias</em>) to see which caterpillars are known to feed on it.</p>
+
+<div class="search-module">
+  <!-- File Upload Section -->
+  <div class="upload-section">
+    <label for="jsonUpload" class="upload-label"><strong>1. Load Database File:</strong></label>
+    <input type="file" id="jsonUpload" accept=".json" class="file-input">
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <label for="plantSearch"><strong>2. Search Host Plant:</strong></label>
+    <input type="text" id="plantSearch" class="field-search-input" placeholder="Search by plant genus..." autocomplete="off" disabled>
+  </div>
+  
+  <div id="resultsSummary" class="results-summary">Please upload the JSON database to enable searching.</div>
+  <ul id="caterpillarResults" class="caterpillar-list"></ul>
+</div>
+
+<style>
+  /* Custom Sass/CSS overrides for field usability */
+  .search-module {
+    margin-top: 2em;
+  }
+  
+  .upload-section, .search-section {
+    margin-bottom: 1.5em;
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+
+  .upload-label {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .file-input {
+    font-size: 1rem;
+  }
+
+  .field-search-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin-top: 8px;
+    box-sizing: border-box;
+  }
+  
+  .field-search-input:focus {
+    border-color: #3b5998;
+    outline: none;
+  }
+
+  .field-search-input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+  }
+
+  .results-summary {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 1em;
+    font-style: italic;
+  }
+
+  .caterpillar-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .caterpillar-card {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-left: 5px solid #4CAF50;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+
+  .caterpillar-card h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+  }
+
+  .caterpillar-card .sci-name {
+    font-style: italic;
+    color: #555;
+  }
+
+  .caterpillar-card .meta {
+    font-size: 0.85em;
+    color: #777;
+    margin-top: 8px;
+  }
+  
+  .tag {
+    display: inline-block;
+    background: #e1f5fe;
+    color: #0277bd;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 5px;
+    margin-top: 5px;
+    font-size: 0.8em;
+  }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let lepData = [];
+    const fileInput = document.getElementById('jsonUpload');
+    const searchInput = document.getElementById('plantSearch');
+    const resultsContainer = document.getElementById('caterpillarResults');
+    const resultsSummary = document.getElementById('resultsSummary');
+
+    // Handle the file upload
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        resultsSummary.textContent = "Loading file...";
+
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                // Parse the JSON data from the uploaded file
+                lepData = JSON.parse(event.target.result);
+                
+                // Enable the search bar and update the summary
+                searchInput.disabled = false;
+                searchInput.focus();
+                resultsSummary.textContent = `Success! Database loaded: ${lepData.length.toLocaleString()} records ready.`;
+                
+                // Clear any previous results
+                resultsContainer.innerHTML = '';
+                searchInput.value = '';
+                
+            } catch (error) {
+                resultsSummary.textContent = "Error parsing file. Please ensure you uploaded a valid JSON file.";
+                console.error("JSON parsing error:", error);
+                searchInput.disabled = true;
+            }
+        };
+
+        reader.onerror = function() {
+            resultsSummary.textContent = "Error reading the file.";
+        };
+
+        // Read the file as plain text
+        reader.readAsText(file);
+    });
+
+    // Listen for typing in the search bar
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        resultsContainer.innerHTML = ''; 
+        
+        // Wait until 3 characters are typed to prevent massive DOM updates
+        if (query.length < 3) {
+            if (query.length === 0 && lepData.length > 0) {
+                 resultsSummary.textContent = `Database loaded: ${lepData.length.toLocaleString()} records ready.`;
+            } else {
+                 resultsSummary.textContent = "Type at least 3 characters to search...";
+            }
+            return; 
+        }
+
+        // Filter the data based on the host plant array
+        const matches = lepData.filter(lep => {
+            return lep.host_genera.some(genus => genus.toLowerCase().includes(query));
+        });
+
+        // Update the summary text
+        resultsSummary.textContent = `Found ${matches.length} caterpillar(s) associated with "${query}".`;
+
+        // Render the results as HTML cards
+        matches.forEach(match => {
+            const li = document.createElement('li');
+            li.className = 'caterpillar-card';
+            
+            const title = match.common_name ? match.common_name : "Common name unrecorded";
+            
+            const matchedPlantsHtml = match.host_genera
+                .filter(g => g.toLowerCase().includes(query))
+                .map(g => `<span class="tag">${g}</span>`)
+                .join('');
+
+            li.innerHTML = `
+                <h3>${title}</h3>
+                <div class="sci-name">${match.scientific_name}</div>
+                <div class="meta">
+                    <strong>Family:</strong> ${match.family} <br>
+                    <strong>Size:</strong> ${match.size ? match.size : "N/A"} <br>
+                    <strong>Geographic Range:</strong> ${match.range ? match.range : "N/A"}
+                </div>
+                <div>${matchedPlantsHtml}</div>
+            `;
+            resultsContainer.appendChild(li);
+        });
+    });
+});
+</script>

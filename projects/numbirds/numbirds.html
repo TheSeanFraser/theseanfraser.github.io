@@ -1,0 +1,252 @@
+---
+layout: default
+title: How many birds?
+permalink: /numbirds/
+---
+<style>
+  .flock-game { max-width: 760px; margin: 0 auto; font-family: inherit; }
+  .flock-game h1 { margin-bottom: .25rem; }
+  .flock-game .lede { margin-top: 0; opacity: .8; }
+  .fg-stage { position: relative; border-radius: 12px; overflow: hidden; background: #1d2a4a; aspect-ratio: 16 / 9; }
+  .fg-stage canvas { display: block; width: 100%; height: 100%; }
+  .fg-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; text-align: center; color: #fff6e8; padding: 1rem; }
+  .flock-game .fg-overlay.is-off, .flock-game .fg-score.is-off { display: none !important; }
+  .flock-game .fg-overlay p, .flock-game .fg-overlay strong { color: #fff6e8 !important; margin: 0; }
+  .flock-game .fg-overlay button { background: #ffd9a0 !important; color: #1d2a4a !important; border: 0 !important; }
+  .fg-overlay p { margin: 0; font-size: 1.1rem; text-shadow: 0 1px 6px rgba(0,0,0,.45); }
+  .flock-game button { font: inherit; font-weight: 600; padding: .6rem 1.4rem; border: 0; border-radius: 999px; background: #ffd9a0; color: #1d2a4a; cursor: pointer; }
+  .flock-game button:hover { background: #ffe6bf; }
+  .flock-game button:focus-visible, .flock-game input:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .fg-form { display: flex; gap: .5rem; }
+  .fg-form input { font: inherit; width: 8rem; padding: .55rem .8rem; border-radius: 8px; border: 2px solid #ffd9a0; background: rgba(255,255,255,.95); color: #1d2a4a; text-align: center; }
+  .fg-result strong { font-size: 2.2rem; display: block; line-height: 1.1; }
+  .fg-type { display: flex; align-items: center; gap: .6rem; margin: 0 0 .6rem; }
+  .fg-type select { font: inherit; padding: .35rem .6rem; border-radius: 8px; }
+  .fg-error { color: #ffb4a8; min-height: 1.2em; font-size: .95rem; }
+  .fg-score { margin-top: .75rem; display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: .95rem; opacity: .85; }
+</style>
+
+<div class="flock-game">
+  <h1>Numbirds: The Game</h1>
+  <p class="lede">A flock of blackbirds crosses the sky, or a kettle of raptors circles on a thermal. Count fast, then guess the number of birds.</p>
+
+  <div class="fg-type">
+    <label for="fg-type">Flock type</label>
+    <select id="fg-type">
+      <option value="flock">Migrating flock</option>
+      <option value="kettle">Raptor kettle</option>
+    </select>
+  </div>
+
+  <div class="fg-stage">
+    <canvas id="fg-canvas" aria-label="Sky where a flock of birds flies past"></canvas>
+
+    <div class="fg-overlay" id="fg-start">
+      <p>Ready? The flock appears for a few seconds.</p>
+      <button type="button" id="fg-go">Release the flock</button>
+    </div>
+
+    <div class="fg-overlay is-off" id="fg-ask">
+      <p>How many birds flew by?</p>
+      <div class="fg-form" id="fg-form">
+        <input id="fg-guess" type="number" min="0" step="1" inputmode="numeric" aria-label="Your guess">
+        <button type="button" id="fg-submit">Guess</button>
+      </div>
+      <div class="fg-error" id="fg-error" role="alert"></div>
+    </div>
+
+    <div class="fg-overlay fg-result is-off" id="fg-result" aria-live="polite">
+      <p>There were <strong id="fg-actual"></strong> birds.</p>
+      <p id="fg-off"></p>
+      <button type="button" id="fg-again">Play again</button>
+    </div>
+  </div>
+
+  <div class="fg-score is-off" id="fg-score">
+    <span>Rounds: <b id="fg-rounds">0</b></span>
+    <span>Average miss: <b id="fg-avg">–</b></span>
+    <span>Best: <b id="fg-best">–</b></span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var canvas = document.getElementById('fg-canvas');
+  var ctx = canvas.getContext('2d');
+  var $ = function (id) { return document.getElementById(id); };
+  var startEl = $('fg-start'), askEl = $('fg-ask'), resultEl = $('fg-result');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W = 0, H = 0, K = 1,  birds = [], count = 0, raf = null, t0 = 0;
+  var DURATION = 5000; // ms the group stays on screen
+  var rounds = 0, totalMiss = 0, best = null;
+
+  function resize() {
+    var r = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    W = r.width; H = r.height;
+    K = Math.min(1, W / 760); // shrink birds and spread on small screens
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawSky();
+  }
+  window.addEventListener('resize', function () { if (!raf) resize(); });
+
+  function drawSky() {
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#1d2a4a');
+    g.addColorStop(0.55, '#7a5c7e');
+    g.addColorStop(1, '#f2a56b');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Random count on a log scale so small and large groups both appear.
+  function pickCount(min, max) {
+    return Math.round(Math.exp(Math.log(min) + Math.random() * (Math.log(max) - Math.log(min))));
+  }
+
+  var type = 'flock', flock = null;
+
+  function show(el) {
+    [startEl, askEl, resultEl].forEach(function (x) { x.classList.toggle('is-off', x !== el); });
+  }
+
+  // Migrating flock: a loose cloud of small ovals crossing the screen.
+  function makeFlock(n) {
+    var spreadX = 70 + Math.sqrt(n) * 22, spreadY = 40 + Math.sqrt(n) * 9;
+    var arr = [];
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, d = Math.sqrt(Math.random());
+      arr.push({
+        dx: Math.cos(a) * d * spreadX, dy: Math.sin(a) * d * spreadY,
+        size: 5 + Math.random() * 5, phase: Math.random() * Math.PI * 2,
+        rate: 9 + Math.random() * 4, bobAmp: 2 + Math.random() * 4,
+        lag: (Math.random() - 0.5) * 40
+      });
+    }
+    return { birds: arr, spreadX: spreadX };
+  }
+
+  function drawFlock(now, p) {
+    var startX = -flock.spreadX * K - 40, endX = W + flock.spreadX * K + 40;
+    var cx = startX + (endX - startX) * p;
+    var cy = H * 0.38 + Math.sin(p * Math.PI * 2) * H * 0.04;
+    var t = now / 1000;
+    ctx.fillStyle = '#10141f';
+    for (var i = 0; i < flock.birds.length; i++) {
+      var b = flock.birds[i];
+      var x = cx + (b.dx + b.lag) * K;
+      var y = cy + (b.dy + Math.sin(t * 2 + b.phase) * b.bobAmp) * K;
+      var flap = reduceMotion ? 0.6 : 0.45 + 0.35 * Math.abs(Math.sin(t * b.rate + b.phase));
+      ctx.beginPath();
+      ctx.ellipse(x, y, b.size * K, b.size * K * flap, -0.08, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Raptor kettle: broad-winged birds circling on a thermal, all turning the
+  // same way at different heights, while the whole column drifts and rises.
+  function makeKettle(n) {
+    var arr = [];
+    for (var i = 0; i < n; i++) {
+      arr.push({
+        phase: Math.random() * Math.PI * 2,
+        omega: 0.2 + Math.random() * 0.2,      // radians per second
+        r: 0.25 + Math.random() * 0.75,         // orbit radius (fraction)
+        h: Math.random() * 2 - 1,               // height in the column
+        size: 6 + Math.random() * 4
+      });
+    }
+    return { birds: arr, scale: 0.7 + 0.3 * Math.min(1, Math.sqrt(n / 80)) };
+  }
+
+  function drawKettle(now, p) {
+    var el = (now - t0) / 1000;
+    var R = H * 0.34 * flock.scale;
+    var cx = W * (0.38 + 0.24 * p), cy = H * (0.52 - 0.1 * p);
+    var list = flock.birds.map(function (b) {
+      var th = b.phase + b.omega * el * (reduceMotion ? 0.4 : 1);
+      return { b: b, th: th, depth: Math.sin(th) };
+    }).sort(function (a, c) { return a.depth - c.depth; });
+
+    ctx.globalAlpha = Math.min(1, p / 0.08, (1 - p) / 0.08);
+    ctx.fillStyle = '#10141f';
+    for (var i = 0; i < list.length; i++) {
+      var b = list[i].b, th = list[i].th, d = list[i].depth;
+      var x = cx + Math.cos(th) * b.r * R * 1.5;
+      var y = cy + d * b.r * R * 0.28 + b.h * H * 0.22;
+      var s = b.size * K * (0.88 + 0.22 * d);
+      var bank = Math.cos(th) * -0.28;                 // lean into the turn
+      var span = s * (2.2 + 0.7 * Math.abs(Math.sin(th))); // wings foreshorten head-on
+      ctx.beginPath();                                    // wings
+      ctx.ellipse(x, y, span, s * 0.38, bank, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();                                    // body
+      ctx.ellipse(x, y, s * 0.38, s * 0.8, bank, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function frame(now) {
+    var p = (now - t0) / DURATION;
+    drawSky();
+    if (p >= 1) { raf = null; showAsk(); return; }
+    if (type === 'kettle') drawKettle(now, p); else drawFlock(now, p);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function startRound() {
+    type = $('fg-type').value;
+    $('fg-type').disabled = true;
+    if (type === 'kettle') { DURATION = 8000; count = pickCount(8, 100); flock = makeKettle(count); }
+    else { DURATION = 5000; count = pickCount(6, 150); flock = makeFlock(count); }
+    show(null);
+    $('fg-guess').value = ''; $('fg-error').textContent = '';
+    resize();
+    t0 = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+
+  function showAsk() {
+    $('fg-type').disabled = false;
+    show(askEl);
+    $('fg-guess').focus();
+  }
+
+  $('fg-go').addEventListener('click', startRound);
+  $('fg-again').addEventListener('click', startRound);
+
+  function submitGuess() {
+    var raw = $('fg-guess').value.trim();
+    var guess = Number(raw);
+    if (raw === '' || !isFinite(guess) || guess < 0) {
+      $('fg-error').textContent = 'Enter a whole number, 0 or higher.';
+      return;
+    }
+    guess = Math.round(guess);
+    var miss = Math.abs(guess - count) / count * 100;
+    var dir = guess === count ? '' : (guess > count ? ' too high' : ' too low');
+
+    $('fg-actual').textContent = count;
+    $('fg-off').textContent = guess === count
+      ? 'You guessed ' + guess + ': exactly right.'
+      : 'You guessed ' + guess + ': off by ' + miss.toFixed(1) + '%' + dir + '.';
+
+    rounds++; totalMiss += miss;
+    best = best === null ? miss : Math.min(best, miss);
+    $('fg-rounds').textContent = rounds;
+    $('fg-avg').textContent = (totalMiss / rounds).toFixed(1) + '%';
+    $('fg-best').textContent = best.toFixed(1) + '%';
+    $('fg-score').classList.remove('is-off');
+
+    show(resultEl);
+  }
+  $('fg-submit').addEventListener('click', submitGuess);
+  $('fg-guess').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); submitGuess(); }
+  });
+
+  resize();
+})();
+</script>

@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "2024 High Park & Sunnyside Beach Birding Highlights"
 date:   2024-12-31 
 tags: birds
@@ -9,9 +8,7 @@ tags: birds
 
 <!--more-->
 
-|![Image](/assets/images/2024-03-08_BUOR.jpg)|
-| :---: |
-|*Bullock's Oriole - 8 MAR 2024* |
+{% include figure popup=true image_path="/assets/images/2024-03-08_BUOR.jpg" alt="this is a placeholder image" caption="Bullock's Oriole - 8 MAR 2024" %}
 
 In order of appearance:
 1. **Bullock's Oriole**: *23 FEB*
@@ -27,8 +24,9 @@ In order of appearance:
 11. **Cave Swallows**: Sunnyside Beach - *22 NOV*
 12. **Mallard x Northern Pintail hybrid** (returning for second year): *17 DEC*
 
-|![Image](/assets/images/2024-11-22_CASW.jpg)|
-| :---: |
-|*Cave Swallow - 22 NOV 2024* |
+
+
+{% include figure popup=true image_path="/assets/images/2024-11-22_CASW.jpg" alt="this is a placeholder image" caption="Cave Swallow - 22 NOV 2024" %}
+
 
 I finished the year with 198 species seen within High Park & Sunnyside Beach, with one more species just outside the boundary of this patch. The quest for 200 in one year continues...
