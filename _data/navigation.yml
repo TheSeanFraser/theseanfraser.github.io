@@ -6,5 +6,8 @@ main:
     url: /about/
   - title: "Projects"
     url: /projects/
-  # - title: "Photography"
-  #   url: /photography/
+  - title: "Photography"
+    url: /photography/
+  - title: "Posts"
+    url: /posts/
+    
